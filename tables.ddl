@@ -67,3 +67,22 @@ CREATE TABLE salaries
 	gender gender_type DEFAULT 'Other',
 	comments TEXT
 );
+
+CREATE VIEW salaries_v AS
+	SELECT
+		salary_id,
+		employers.employer_name,
+		locations.location_name,
+		job_titles.job_title,
+		total_experience_years,
+		employer_experience_years,
+		annual_base_pay,
+		signing_bonus,
+		annual_bonus,
+		stock_value_bonus,
+		comments,
+		submitted_at
+	FROM salaries
+		INNER JOIN employers ON salaries.employer_key = employers.employer_key
+		INNER JOIN locations ON salaries.location_key = locations.location_key
+		INNER JOIN job_titles ON salaries.job_title_key = job_titles.job_title_key;
