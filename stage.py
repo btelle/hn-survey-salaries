@@ -1,7 +1,7 @@
 import sqlalchemy, psycopg2, re, pandas, math
 
 # Download CSV file here: https://docs.google.com/feeds/download/spreadsheets/Export?docID=1a1Df6dg2Pby1UoNlZU2l0FEykKsQKttu7O6q7iQd2bU&exportFormat=csv
-sheet_url = './salaries.csv'
+sheet_url = 'data/salaries.csv'
 
 def convert_currency(text):
 	# convert foreign to USD
@@ -30,6 +30,10 @@ def convert_currency(text):
 if __name__ == '__main__':
 	db = sqlalchemy.create_engine('postgresql://localhost:5432/brandontelle')
 	db.engine.execute("DROP TABLE IF EXISTS public.salary_staging;")
+	db.engine.execute("DROP TABLE IF EXISTS public.us_states;")
+	db.engine.execute("DROP TABLE IF EXISTS public.ca_states;")
+	db.engine.execute("DROP TABLE IF EXISTS public.countries;")
+	db.engine.execute("DROP TABLE IF EXISTS public.zip_codes;")
 
 	dataframe = pandas.read_csv(sheet_url, header=0, names=['ts', 'employer', 'location', 'job_title', 'employer_experience_years', 'total_experience_years', 'annual_base_pay', 'signing_bonus', 'annual_bonus', 'stock_value_bonus', 'gender', 'comments'])
 
@@ -63,7 +67,7 @@ if __name__ == '__main__':
 		for r in [5,6,7,8,9]:
 			try:
 				float(row[r])
-				if (r > 6 and float(row[r]) >= math.pow(10, 10)) or (r <= 6 and float(row[r]) >= 60):
+				if (r > 6 and float(row[r]) >= math.pow(10, 10)) or (r <= 6 and float(row[r]) >= 60) or float(row[r]) < 0:
 					print(row)
 					dataframe = dataframe.drop(row[0])
 					break;
@@ -75,6 +79,26 @@ if __name__ == '__main__':
 			except TypeError:
 				pass
 
+		if row[7] and float(row[7]) <= 23:
+			try:
+				print(row)
+				dataframe = dataframe.drop(row[0])
+				continue
+			except ValueError:
+				pass
 
 	dataframe.to_sql('salary_staging', db, index_label='id')
+
+	us_states = pandas.read_csv('data/us_states.csv', header=0)
+	us_states.to_sql('us_states', db, index=False)
+
+	ca_states = pandas.read_csv('data/ca_states.csv', header=0)
+	ca_states.to_sql('ca_states', db, index=False)
+
+	countries = pandas.read_csv('data/countries.csv', header=0, sep=';')
+	countries.to_sql('countries', db, index=False)
+
+	zips = pandas.read_csv('data/zipcodes.csv', header=0)
+	zips.to_sql('zip_codes', db, index=False)
+
 	db.dispose()

@@ -22,6 +22,72 @@ update_locations = """
 	WHERE lower(trim(location)) NOT IN(SELECT location_name FROM locations) and location IS NOT NULL
 	;"""
 
+update_location_countries = """
+	UPDATE locations SET
+		location_country = cca2
+	FROM
+		countries
+	where (locations.location_name LIKE '%' || LOWER(substring(name from 0 for position(',' in name))) || '%')
+		AND location_country IS NULL
+	;"""
+
+update_location_states = """
+	UPDATE locations SET
+		location_state = abbreviation,
+		location_country = 'US'
+	FROM
+		us_states
+	WHERE (locations.location_name LIKE '%' || LOWER(us_states.name) || '%'
+			OR locations.location_name LIKE '%, ' || LOWER(us_states.abbreviation) || '%'
+			OR locations.location_name LIKE '% ' || LOWER(us_states.abbreviation))
+		AND locations.location_state IS NULL AND locations.location_country IS NULL
+	;"""
+
+update_location_ca_states = """
+	UPDATE locations SET
+		location_state = abbreviation,
+		location_country = 'CA'
+	FROM
+		ca_states
+	WHERE (locations.location_name LIKE '%' || LOWER(ca_states.name) || '%'
+			OR locations.location_name LIKE '%, ' || LOWER(ca_states.abbreviation) || '%'
+			OR locations.location_name LIKE '% ' || LOWER(ca_states.abbreviation))
+		AND locations.location_state IS NULL and locations.location_country IS NULL
+	;"""
+
+update_location_cities = """
+	UPDATE locations SET
+		location_city = nullif(substring(location_name from 0 for position(',' in location_name)), '')
+	WHERE location_city IS NULL
+	;"""
+
+update_zip_codes = """
+	UPDATE locations SET
+		location_city = lower("City"),
+		location_state="State",
+		location_country='US'
+	FROM zip_codes
+	WHERE location_name="Zipcode"::VARCHAR
+		AND location_city IS NULL
+	;"""
+
+update_lat_long_by_state = """
+	UPDATE locations
+		SET location_latitude="Lat",
+			location_longitude="Long"
+	FROM zip_codes
+	WHERE location_city = lower("City") and location_state="State"
+	;"""
+
+update_lat_long_by_country = """
+	UPDATE locations
+		SET location_latitude = substring(latlng from 0 for position(',' in latlng))::decimal(6,2),
+			location_longitude = substring(latlng from position(',' in latlng)+1)::decimal(6,2)
+	FROM countries
+	WHERE location_country = cca2 
+		AND location_latitude IS NULL and location_longitude IS NULL
+	;"""
+
 update_job_titles = """
 	INSERT INTO job_titles
 	(
@@ -76,5 +142,12 @@ with psycopg2.connect(host='localhost') as conn:
 	with conn.cursor() as cur:
 		cur.execute(update_employers)
 		cur.execute(update_locations)
+		cur.execute(update_location_countries)
+		cur.execute(update_location_states)
+		cur.execute(update_location_ca_states)
+		cur.execute(update_location_cities)
+		cur.execute(update_zip_codes)
+		cur.execute(update_lat_long_by_state)
+		cur.execute(update_lat_long_by_country)
 		cur.execute(update_job_titles)
 		cur.execute(insert_salaries)

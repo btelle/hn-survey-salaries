@@ -1,7 +1,7 @@
 -- Timestamp,Employer,Location,Job Title,Years at Employer,Years of Experience,Annual Base Pay,
 -- Signing Bonus,Annual Bonus,Annual Stock Value/Bonus,Gender,Additional Comments
 
-DROP TABLE IF EXISTS salary_staging;
+DROP VIEW salaries_v;
 DROP TABLE salaries;
 DROP TABLE employers;
 DROP TABLE locations;
@@ -9,24 +9,6 @@ DROP TABLE job_titles;
 DROP TYPE gender_type;
 
 CREATE TYPE gender_type AS ENUM('Male', 'Female', 'Other');
-
--- Staging table
-CREATE TABLE salary_staging
-(
-	id INT NOT NULL PRIMARY KEY,
-	ts TIMESTAMP NOT NULL,
-	employer VARCHAR(255) DEFAULT NULL,
-	location VARCHAR(255) DEFAULT NULL,
-	job_title VARCHAR(255) DEFAULT NULL,
-	total_experience_years INT DEFAULT NULL,
-	employer_experience_years INT DEFAULT NULL,
-	annual_base_pay DECIMAL(12, 2) DEFAULT NULL,
-	signing_bonus DECIMAL(12, 2) DEFAULT NULL,
-	annual_bonus DECIMAL(12, 2) DEFAULT NULL,
-	stock_value_bonus DECIMAL(12, 2) DEFAULT NULL,
-	gender gender_type DEFAULT 'Other',
-	comments TEXT
-);
 
 -- Dimensions
 CREATE TABLE employers
@@ -41,7 +23,9 @@ CREATE TABLE locations
 	location_name VARCHAR(255) NOT NULL,
 	location_city VARCHAR(255) DEFAULT NULL,
 	location_state CHAR(2) DEFAULT NULL,
-	location_country CHAR(2) DEFAULT NULL
+	location_country CHAR(2) DEFAULT NULL,
+	location_latitude DECIMAL(6, 2) DEFAULT NULL,
+	location_longitude DECIMAL(6, 2) DEFAULT NULL
 );
 
 CREATE TABLE job_titles
@@ -73,6 +57,10 @@ CREATE VIEW salaries_v AS
 		salary_id,
 		employers.employer_name,
 		locations.location_name,
+		locations.location_state,
+		locations.location_country,
+		locations.location_latitude,
+		locations.location_longitude,
 		job_titles.job_title,
 		total_experience_years,
 		employer_experience_years,
