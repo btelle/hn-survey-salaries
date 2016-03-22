@@ -1,5 +1,3 @@
-from __future__ import print_function
-import httplib2
 import os
 import sys
 import pandas
