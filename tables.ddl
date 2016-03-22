@@ -1,6 +1,13 @@
 -- Timestamp,Employer,Location,Job Title,Years at Employer,Years of Experience,Annual Base Pay,
 -- Signing Bonus,Annual Bonus,Annual Stock Value/Bonus,Gender,Additional Comments
 
+DROP TABLE IF EXISTS salary_staging;
+DROP TABLE salaries;
+DROP TABLE employers;
+DROP TABLE locations;
+DROP TABLE job_titles;
+DROP TYPE gender_type;
+
 CREATE TYPE gender_type AS ENUM('Male', 'Female', 'Other');
 
 -- Staging table
@@ -51,12 +58,12 @@ CREATE TABLE salaries
 	employer_key INT REFERENCES employers DEFAULT NULL,
 	location_key INT REFERENCES locations DEFAULT NULL,
 	job_title_key INT REFERENCES job_titles DEFAULT NULL,
-	total_experience_years INT DEFAULT NULL,
-	employer_experience_years INT DEFAULT NULL,
+	total_experience_years DECIMAL(6, 2) DEFAULT NULL,
+	employer_experience_years DECIMAL(6, 2) DEFAULT NULL,
 	annual_base_pay DECIMAL(12, 2) DEFAULT NULL,
 	signing_bonus DECIMAL(12, 2) DEFAULT NULL,
 	annual_bonus DECIMAL(12, 2) DEFAULT NULL,
-	stock_value_bonus DECIMAL(12, 2) DEFAULT NULL,
+	stock_value_bonus VARCHAR(255) DEFAULT NULL,
 	gender gender_type DEFAULT 'Other',
 	comments TEXT
 );

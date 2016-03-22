@@ -56,12 +56,12 @@ insert_salaries = """
 		lo.location_key as location_key,
 		jt.job_title_key as job_title_key,
 		stg.ts::TIMESTAMP as submitted_at,
-		stg.total_experience_years::INT,
-		stg.employer_experience_years::INT,
+		stg.total_experience_years::DECIMAL(6,2),
+		stg.employer_experience_years::DECIMAL(6,2),
 		stg.annual_base_pay::DECIMAL(12,2),
 		stg.signing_bonus::DECIMAL(12,2),
 		stg.annual_bonus::DECIMAL(12,2),
-		stg.stock_value_bonus::DECIMAL(12,2),
+		stg.stock_value_bonus,
 		stg.gender::gender_type,
 		stg.comments
 
