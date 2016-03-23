@@ -99,6 +99,162 @@ update_job_titles = """
 	WHERE lower(trim(job_title)) NOT IN(SELECT job_title FROM job_titles) and job_title IS NOT NULL
 	;"""
 
+update_job_categories_exec = """
+	UPDATE job_titles
+		SET job_title_category='Management'
+	WHERE (job_title LIKE 'c_o%'
+				OR job_title LIKE 'founder%'
+				OR job_title LIKE '%co-founder%'
+				OR job_title LIKE '%exec%'
+				OR job_title LIKE '%president%'
+				OR job_title LIKE 'vp%'
+				OR job_title LIKE '%director%'
+				OR job_title LIKE '%admin%'
+				OR job_title LIKE '%manager%'
+				OR job_title LIKE '%team lead'
+				)
+		AND job_title_category IS NULL
+	;"""
+
+update_job_categories_data = """
+	UPDATE job_titles
+		SET job_title_category='Data'
+	WHERE (job_title LIKE '%data%'
+				OR job_title LIKE '%analyst%'
+				)
+		AND job_title_category IS NULL
+	;"""
+
+update_job_categories_web = """
+	UPDATE job_titles
+		SET job_title_category='Web'
+	WHERE (job_title LIKE 'full_stack%'
+				OR job_title LIKE '%fullstack%'
+				OR job_title LIKE '%front_end%'
+				OR job_title LIKE '%frontend%'
+				OR job_title LIKE '%web %'
+				)
+		AND job_title_category IS NULL
+	;"""
+
+update_job_categories_sw = """
+	UPDATE job_titles
+		SET job_title_category='Software'
+	WHERE (job_title LIKE '%swe%'
+				OR job_title LIKE '%sde%'
+				OR job_title LIKE '%developer%'
+				OR job_title LIKE '%software%'
+				OR job_title LIKE '%development%'
+				OR job_title = 'computer scientist'
+				OR job_title LIKE '%tech lead'
+				OR job_title LIKE 'technical lead%'
+				)
+		AND job_title_category IS NULL
+	;"""
+
+update_job_categories_eng = """
+	UPDATE job_titles
+		SET job_title_category='Engineering'
+	WHERE (job_title LIKE '%engineer%')
+		AND job_title_category IS NULL
+	;"""
+
+update_job_categories_ops = """
+	UPDATE job_titles
+		SET job_title_category='Operations'
+	WHERE (job_title LIKE 'devop_'
+				OR job_title LIKE '%operations%'
+				OR job_title LIKE '% devops'
+				)
+		AND job_title_category IS NULL
+		;"""
+
+update_job_categories_sci = """
+	UPDATE job_titles
+		SET job_title_category='Applied Science'
+	WHERE (job_title LIKE '%science%'
+				OR job_title LIKE '%scientist%'
+				OR job_title LIKE '%physics%'
+				OR job_title LIKE '%scientific%'
+				)
+		AND job_title_category IS NULL;
+"""
+
+update_job_categories_other = """
+	UPDATE job_titles
+		SET job_title_category='Other'
+	WHERE job_title_category IS NULL
+	;"""
+
+update_job_rank_4 = """
+	UPDATE job_titles
+		SET job_title_rank = '4'
+	WHERE (job_title LIKE '% iv'
+				 OR job_title LIKE '%iv'
+				 OR job_title LIKE '% 4'
+				 OR job_title LIKE '%4'
+				)
+		AND job_title_rank IS NULL
+	;"""
+
+update_job_rank_3 = """
+	UPDATE job_titles
+		SET job_title_rank = '3'
+	WHERE (job_title LIKE '% iii'
+				 OR job_title LIKE '%iii'
+				 OR job_title LIKE '% 3'
+				 OR job_title LIKE '%3'
+				)
+		AND job_title_rank IS NULL
+	;"""
+
+update_job_rank_2 = """
+	UPDATE job_titles
+		SET job_title_rank = '2'
+	WHERE (job_title LIKE '% ii'
+				 OR job_title LIKE '% 2'
+				 OR job_title LIKE '%2'
+				)
+		AND job_title_rank IS NULL
+	;"""
+
+update_job_rank_1 = """
+	UPDATE job_titles
+		SET job_title_rank = '1'
+	WHERE (job_title LIKE '% i'
+				 OR job_title LIKE '% 1'
+				 OR job_title LIKE '%1'
+				)
+		AND job_title_rank IS NULL
+	;"""
+
+update_job_rank_sr = """
+	UPDATE job_titles
+		SET job_title_rank = 'Senior'
+	WHERE (job_title LIKE 'senior%'
+				 OR job_title LIKE 'sr_%'
+				)
+		AND job_title_rank IS NULL
+	;"""
+
+update_job_rank_jr = """
+	UPDATE job_titles
+		SET job_title_rank = 'Junior'
+	WHERE (job_title LIKE 'junior%'
+				 OR job_title LIKE 'jr_%'
+				)
+		AND job_title_rank IS NULL
+	;"""
+
+update_job_rank_intern = """
+	UPDATE job_titles
+		SET job_title_rank = 'Intern'
+	WHERE (job_title LIKE '%intern%'
+				 OR job_title LIKE '%internship%'
+				)
+		AND job_title_rank IS NULL
+	;"""
+
 insert_salaries = """
 	INSERT INTO salaries
 	(
@@ -150,4 +306,19 @@ with psycopg2.connect(host='localhost') as conn:
 		cur.execute(update_lat_long_by_state)
 		cur.execute(update_lat_long_by_country)
 		cur.execute(update_job_titles)
+		cur.execute(update_job_categories_exec)
+		cur.execute(update_job_categories_data)
+		cur.execute(update_job_categories_web)
+		cur.execute(update_job_categories_sw)
+		cur.execute(update_job_categories_eng)
+		cur.execute(update_job_categories_ops)
+		cur.execute(update_job_categories_sci)
+		cur.execute(update_job_categories_other)
+		cur.execute(update_job_rank_4)
+		cur.execute(update_job_rank_3)
+		cur.execute(update_job_rank_2)
+		cur.execute(update_job_rank_1)
+		cur.execute(update_job_rank_sr)
+		cur.execute(update_job_rank_jr)
+		cur.execute(update_job_rank_intern)
 		cur.execute(insert_salaries)

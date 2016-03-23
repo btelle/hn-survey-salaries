@@ -6,9 +6,11 @@ DROP TABLE salaries;
 DROP TABLE employers;
 DROP TABLE locations;
 DROP TABLE job_titles;
+DROP TYPE job_category_type;
 DROP TYPE gender_type;
 
 CREATE TYPE gender_type AS ENUM('Male', 'Female', 'Other');
+CREATE TYPE job_category_type as ENUM('Management', 'Data', 'Web', 'Engineering', 'Software', 'Operations', 'Applied Science', 'Other')
 
 -- Dimensions
 CREATE TABLE employers
@@ -31,7 +33,9 @@ CREATE TABLE locations
 CREATE TABLE job_titles
 (
 	job_title_key SERIAL PRIMARY KEY,
-	job_title VARCHAR(255)
+	job_title VARCHAR(255),
+	job_title_category job_category_type,
+	job_title_rank VARCHAR(50)
 );
 
 -- Salaries table
@@ -62,6 +66,8 @@ CREATE VIEW salaries_v AS
 		locations.location_latitude,
 		locations.location_longitude,
 		job_titles.job_title,
+		job_titles.job_title_category,
+		job_titles.job_title_rank,
 		total_experience_years,
 		employer_experience_years,
 		annual_base_pay,
