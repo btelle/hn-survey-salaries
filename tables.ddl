@@ -61,6 +61,7 @@ CREATE VIEW salaries_v AS
 		salary_id,
 		employers.employer_name,
 		locations.location_name,
+		locations.location_city,
 		locations.location_state,
 		locations.location_country,
 		locations.location_latitude,
