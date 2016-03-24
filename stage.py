@@ -34,6 +34,7 @@ if __name__ == '__main__':
 	db.engine.execute("DROP TABLE IF EXISTS public.ca_states;")
 	db.engine.execute("DROP TABLE IF EXISTS public.countries;")
 	db.engine.execute("DROP TABLE IF EXISTS public.zip_codes;")
+	db.engine.execute("DROP TABLE IF EXISTS public.cities_counties_xref;")
 
 	dataframe = pandas.read_csv(sheet_url, header=0, names=['ts', 'employer', 'location', 'job_title', 'employer_experience_years', 'total_experience_years', 'annual_base_pay', 'signing_bonus', 'annual_bonus', 'stock_value_bonus', 'gender', 'comments'])
 
@@ -100,5 +101,8 @@ if __name__ == '__main__':
 
 	zips = pandas.read_csv('data/zipcodes.csv', header=0)
 	zips.to_sql('zip_codes', db, index=False)
+
+	cities = pandas.read_csv('data/cities.csv', header=None, names=['state', 'county', 'city'])
+	cities.to_sql('cities_counties_xref', db, index=False)
 
 	db.dispose()

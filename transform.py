@@ -88,6 +88,15 @@ update_lat_long_by_country = """
 		AND location_latitude IS NULL and location_longitude IS NULL
 	;"""
 
+update_county = """
+	UPDATE locations
+	SET location_county = lower(county)
+	FROM cities_counties_xref
+	WHERE locations.location_city=lower(city) 
+		AND lower(locations.location_state)=lower(state)
+		AND location_county IS NULL
+	;"""
+
 update_job_titles = """
 	INSERT INTO job_titles
 	(
@@ -305,6 +314,7 @@ with psycopg2.connect(host='localhost') as conn:
 		cur.execute(update_zip_codes)
 		cur.execute(update_lat_long_by_state)
 		cur.execute(update_lat_long_by_country)
+		cur.execute(update_county)
 		cur.execute(update_job_titles)
 		cur.execute(update_job_categories_exec)
 		cur.execute(update_job_categories_data)

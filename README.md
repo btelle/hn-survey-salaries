@@ -10,6 +10,7 @@ Cleaning up raw data pulled from a Hacker News salary survey conducted on 3/21/1
 * [US and Canadian states](http://statetable.com/)
 * [Countries](https://mledoze.github.io/countries/)
 * [Zip Codes](http://federalgovernmentzipcodes.us/)
+* [Counties](http://pmatsinopoulos.github.io/blog/2014/08/29/united-states-counties-cities-csv-ruby-loading-code/)
 * Google provided currency conversion rates
 
 ## Notes on validation
